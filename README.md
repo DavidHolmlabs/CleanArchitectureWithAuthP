@@ -1,3 +1,5 @@
+# Clean Architecture with AuthP
+
 The goal here is to use JonPSmith's AuthPermissions.AspNetCore in jasontaylordev's CleanArchitecture
 
 https://github.com/JonPSmith/AuthPermissions.AspNetCore
