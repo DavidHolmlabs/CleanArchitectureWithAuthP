@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
+using AuthPermissions.AspNetCore;
 using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Application.Common.Security;
+using CleanArchitecture.Domain.Constants;
 
 namespace CleanArchitecture.Application.Common.Behaviours;
 
@@ -20,7 +21,7 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var authorizeAttributes = request.GetType().GetCustomAttributes<AuthorizeAttribute>();
+        var authorizeAttributes = request.GetType().GetCustomAttributes<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>();
 
         if (authorizeAttributes.Any())
         {
@@ -37,7 +38,7 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
             {
                 var authorized = false;
 
-                foreach (var roles in authorizeAttributesWithRoles.Select(a => a.Roles.Split(',')))
+                foreach (var roles in authorizeAttributesWithRoles.Select(a => a.Roles?.Split(',') ?? []))
                 {
                     foreach (var role in roles)
                     {
@@ -59,13 +60,36 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
 
             // Policy-based authorization
             var authorizeAttributesWithPolicies = authorizeAttributes.Where(a => !string.IsNullOrWhiteSpace(a.Policy));
+
             if (authorizeAttributesWithPolicies.Any())
             {
                 foreach (var policy in authorizeAttributesWithPolicies.Select(a => a.Policy))
                 {
-                    var authorized = await _identityService.AuthorizeAsync(_user.Id, policy);
+                    var authorized = await _identityService.AuthorizeAsync(_user.Id, policy ?? "");
 
                     if (!authorized)
+                    {
+                        throw new ForbiddenAccessException();
+                    }
+                }
+            }
+
+            var authorizeAttributesWithPermissions = authorizeAttributes.Where(a => a is HasPermissionAttribute);
+
+            if (authorizeAttributesWithPermissions.Any())
+            {
+                foreach (var hasPermissionAttribute in authorizeAttributesWithPermissions)
+                {
+                    bool success = Enum.TryParse(hasPermissionAttribute.Policy ?? Permissions.NotSet.ToString(), out Permissions cleanPermissions);
+
+                    if (!success)
+                    {
+                        throw new ArgumentException(hasPermissionAttribute.Policy);
+                    }
+
+                    bool hasPermission = await _identityService.HasPermissionAsync(_user.Id, cleanPermissions);
+
+                    if (!hasPermission)
                     {
                         throw new ForbiddenAccessException();
                     }

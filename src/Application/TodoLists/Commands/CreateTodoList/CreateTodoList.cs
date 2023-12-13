@@ -1,8 +1,11 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
+﻿using AuthPermissions.AspNetCore;
+using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Constants;
 using CleanArchitecture.Domain.Entities;
 
 namespace CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
 
+[HasPermission(Permissions.CreateTodoList)]
 public record CreateTodoListCommand : IRequest<int>
 {
     public string? Title { get; init; }

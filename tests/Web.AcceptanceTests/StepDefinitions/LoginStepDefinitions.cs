@@ -42,8 +42,8 @@ public sealed class LoginStepDefinitions
     [When("the user logs in with valid credentials")]
     public async Task TheUserLogsInWithValidCredentials()
     {
-        await _loginPage.SetEmail("administrator@localhost");
-        await _loginPage.SetPassword("Administrator1!");
+        await _loginPage.SetEmail("Administrator@g1.com");
+        await _loginPage.SetPassword("Administrator@g1.com");
         await _loginPage.ClickLogin();
     }
 

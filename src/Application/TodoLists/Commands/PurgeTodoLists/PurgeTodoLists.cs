@@ -1,11 +1,11 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Application.Common.Security;
+﻿using AuthPermissions.AspNetCore;
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Domain.Constants;
 
 namespace CleanArchitecture.Application.TodoLists.Commands.PurgeTodoLists;
 
-[Authorize(Roles = Roles.Administrator)]
-[Authorize(Policy = Policies.CanPurge)]
+
+[HasPermission(Permissions.PurgeTodoLists)]
 public record PurgeTodoListsCommand : IRequest;
 
 public class PurgeTodoListsCommandHandler : IRequestHandler<PurgeTodoListsCommand>

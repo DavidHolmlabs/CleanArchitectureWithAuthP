@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
+﻿using AuthPermissions.BaseCode.PermissionsCode;
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -63,6 +64,21 @@ public class IdentityService : IIdentityService
         var result = await _authorizationService.AuthorizeAsync(principal, policyName);
 
         return result.Succeeded;
+    }
+
+    public async Task<bool> HasPermissionAsync<TEnumPermissions>(string userId, TEnumPermissions permissionToCheck) 
+        where TEnumPermissions : Enum
+    {
+        var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return false;
+        }
+
+        var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+
+        return principal.HasPermission(permissionToCheck);
     }
 
     public async Task<Result> DeleteUserAsync(string userId)

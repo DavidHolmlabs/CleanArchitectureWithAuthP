@@ -1,7 +1,10 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
+﻿using AuthPermissions.AspNetCore;
+using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Constants;
 
 namespace CleanArchitecture.Application.TodoLists.Commands.UpdateTodoList;
 
+[HasPermission(Permissions.UpdateTodoList)]
 public record UpdateTodoListCommand : IRequest
 {
     public int Id { get; init; }

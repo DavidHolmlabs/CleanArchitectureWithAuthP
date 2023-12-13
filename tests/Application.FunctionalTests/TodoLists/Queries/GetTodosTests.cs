@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Application.TodoLists.Queries.GetTodos;
+﻿using System.Diagnostics;
+using CleanArchitecture.Application.TodoLists.Queries.GetTodos;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.ValueObjects;
 
@@ -43,10 +44,17 @@ public class GetTodosTests : BaseTestFixture
 
         var query = new GetTodosQuery();
 
-        var result = await SendAsync(query);
-
-        result.Lists.Should().HaveCount(1);
-        result.Lists.First().Items.Should().HaveCount(7);
+        try
+        {
+            var result = await SendAsync(query);
+            result.Lists.Should().HaveCount(1);
+            result.Lists.First().Items.Should().HaveCount(7);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            throw;
+        }
     }
 
     [Test]
@@ -55,7 +63,7 @@ public class GetTodosTests : BaseTestFixture
         var query = new GetTodosQuery();
 
         var action = () => SendAsync(query);
-        
+
         await action.Should().ThrowAsync<UnauthorizedAccessException>();
     }
 }

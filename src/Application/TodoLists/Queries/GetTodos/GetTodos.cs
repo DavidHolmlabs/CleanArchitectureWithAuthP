@@ -1,11 +1,12 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
+﻿using AuthPermissions.AspNetCore;
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Common.Models;
-using CleanArchitecture.Application.Common.Security;
+using CleanArchitecture.Domain.Constants;
 using CleanArchitecture.Domain.Enums;
 
 namespace CleanArchitecture.Application.TodoLists.Queries.GetTodos;
 
-[Authorize]
+[HasPermission(Permissions.GetTodos)]
 public record GetTodosQuery : IRequest<TodosVm>;
 
 public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>

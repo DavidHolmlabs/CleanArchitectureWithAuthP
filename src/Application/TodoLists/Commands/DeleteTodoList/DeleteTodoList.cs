@@ -1,7 +1,10 @@
-﻿using CleanArchitecture.Application.Common.Interfaces;
+﻿using AuthPermissions.AspNetCore;
+using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Constants;
 
 namespace CleanArchitecture.Application.TodoLists.Commands.DeleteTodoList;
 
+[HasPermission(Permissions.DeleteTodoList)]
 public record DeleteTodoListCommand(int Id) : IRequest;
 
 public class DeleteTodoListCommandHandler : IRequestHandler<DeleteTodoListCommand>

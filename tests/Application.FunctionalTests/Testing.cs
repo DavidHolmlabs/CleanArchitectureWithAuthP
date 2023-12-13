@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Domain.Constants;
-using CleanArchitecture.Infrastructure.Data;
+﻿using CleanArchitecture.Infrastructure.Data;
 using CleanArchitecture.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -51,12 +50,12 @@ public partial class Testing
 
     public static async Task<string> RunAsDefaultUserAsync()
     {
-        return await RunAsUserAsync("test@local", "Testing1234!", Array.Empty<string>());
+        return await RunAsUserAsync("Manager@g1.com", "Manager@g1.com", ["Manager"]);
     }
 
     public static async Task<string> RunAsAdministratorAsync()
     {
-        return await RunAsUserAsync("administrator@local", "Administrator1234!", new[] { Roles.Administrator });
+        return await RunAsUserAsync("Administrator@g1.com", "Administrator@g1.com", new[] { "Administrator" });
     }
 
     public static async Task<string> RunAsUserAsync(string userName, string password, string[] roles)
@@ -99,7 +98,7 @@ public partial class Testing
         {
             await _database.ResetAsync();
         }
-        catch (Exception) 
+        catch (Exception)
         {
         }
 
