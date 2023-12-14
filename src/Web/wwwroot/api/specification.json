@@ -6,6 +6,75 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/AuthUsers": {
+      "get": {
+        "tags": [
+          "AuthUsers"
+        ],
+        "operationId": "GetAuthUsers",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuthUser"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Roles": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "operationId": "GetRoles",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleWithPermissionNamesDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Tenants": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "GetTenants",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tenant"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -323,6 +392,235 @@
   },
   "components": {
     "schemas": {
+      "AuthUser": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 256,
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "maxLength": 128,
+            "nullable": true
+          },
+          "isDisabled": {
+            "type": "boolean"
+          },
+          "userRoles": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/UserToRole"
+            }
+          },
+          "tenantId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "userTenant": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Tenant"
+              }
+            ]
+          },
+          "nameToUseForError": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UserToRole": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "userId",
+          "roleName"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "roleName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "role": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RoleToPermissions"
+              }
+            ]
+          }
+        }
+      },
+      "RoleToPermissions": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roleName",
+          "packedPermissionsInRole"
+        ],
+        "properties": {
+          "roleName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleType": {
+            "$ref": "#/components/schemas/RoleTypes"
+          },
+          "packedPermissionsInRole": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tenants": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Tenant"
+            }
+          },
+          "nameToUseForError": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "RoleTypes": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Normal",
+          "TenantAutoAdd",
+          "TenantAdminAdd",
+          "HiddenFromTenant"
+        ],
+        "enum": [
+          0,
+          50,
+          60,
+          100
+        ]
+      },
+      "Tenant": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantFullName"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parentDataKey": {
+            "type": "string",
+            "maxLength": 250,
+            "nullable": true
+          },
+          "tenantFullName": {
+            "type": "string",
+            "maxLength": 400,
+            "minLength": 1
+          },
+          "isHierarchical": {
+            "type": "boolean"
+          },
+          "hasOwnDb": {
+            "type": "boolean"
+          },
+          "databaseInfoName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentTenantId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parent": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Tenant"
+              }
+            ]
+          },
+          "children": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Tenant"
+            }
+          },
+          "tenantRoles": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/RoleToPermissions"
+            }
+          },
+          "nameToUseForError": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "RoleWithPermissionNamesDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roleName",
+          "packedPermissionsInRole"
+        ],
+        "properties": {
+          "roleName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleType": {
+            "$ref": "#/components/schemas/RoleTypes"
+          },
+          "packedPermissionsInRole": {
+            "type": "string",
+            "minLength": 1
+          },
+          "permissionNames": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",
         "additionalProperties": false,

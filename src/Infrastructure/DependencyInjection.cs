@@ -61,12 +61,16 @@ public static class DependencyInjection
 
         services.RegisterAuthPermissions<Permissions>(options =>
         {
+            options.TenantType = TenantTypes.SingleLevel;
+            options.LinkToTenantType = LinkToTenantTypes.OnlyAppUsers;
+            options.EncryptionKey = configuration[nameof(AuthPermissionsOptions.EncryptionKey)];
             options.PathToFolderToLock = webRootPath;
         })
             .UsingEfCoreSqlServer(connectionString)
             .IndividualAccountsAuthentication<ApplicationUser>()
             .AddRolesPermissionsIfEmpty(AppAuthSetupData.RolesDefinition)
-            .AddAuthUsersIfEmpty(AppAuthSetupData.UsersWithRolesDefinition)
+            .AddTenantsIfEmpty(AppAuthSetupData.TenantDefinition)
+            .AddAuthUsersIfEmpty(AppAuthSetupData.UsersRolesDefinition)
             .RegisterAuthenticationProviderReader<SyncIndividualAccountApplicationUsers>()
             .RegisterFindUserInfoService<IndividualAccountApplicationUserLookup>()
             .AddSuperUserToIndividualAccounts<ApplicationUser>()
