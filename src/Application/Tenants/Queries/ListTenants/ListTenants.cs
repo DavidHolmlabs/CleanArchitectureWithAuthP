@@ -1,5 +1,4 @@
 ﻿using AuthPermissions.AdminCode;
-using CleanArchitecture.Application.Common.Interfaces;
 using AuthPermissions.BaseCode.DataLayer.Classes;
 
 

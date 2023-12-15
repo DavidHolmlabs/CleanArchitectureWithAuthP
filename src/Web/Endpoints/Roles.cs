@@ -1,7 +1,5 @@
 ﻿using AuthPermissions.AdminCode;
-using AuthPermissions.BaseCode.DataLayer.Classes;
 using CleanArchitecture.Application.Roles.Queries.ListRoles;
-using CleanArchitecture.Application.Tenants.Queries.ListTenants;
 
 namespace CleanArchitecture.Web.Endpoints;
 

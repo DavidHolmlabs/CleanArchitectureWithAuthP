@@ -1,6 +1,5 @@
 ﻿using AuthPermissions.AdminCode;
 using CleanArchitecture.Application.Common.Interfaces;
-using Microsoft.Graph;
 
 namespace CleanArchitecture.Application.Roles.Queries.ListRoles;
 
