@@ -66,7 +66,7 @@ public class IdentityService : IIdentityService
         return result.Succeeded;
     }
 
-    public async Task<bool> HasPermissionAsync<TEnumPermissions>(string userId, TEnumPermissions permissionToCheck) 
+    public async Task<bool> HasPermissionAsync<TEnumPermissions>(string userId, TEnumPermissions permissionToCheck)
         where TEnumPermissions : Enum
     {
         var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);

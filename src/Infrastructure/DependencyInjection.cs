@@ -2,9 +2,10 @@
 using AuthPermissions.AspNetCore;
 using AuthPermissions.AspNetCore.Services;
 using AuthPermissions.AspNetCore.StartupServices;
-using AuthPermissions.BaseCode.SetupCode;
 using AuthPermissions.BaseCode;
+using AuthPermissions.BaseCode.SetupCode;
 using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Constants;
 using CleanArchitecture.Infrastructure;
 using CleanArchitecture.Infrastructure.Data;
 using CleanArchitecture.Infrastructure.Data.Interceptors;
@@ -14,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using RunMethodsSequentially;
-using CleanArchitecture.Domain.Constants;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
