@@ -4,9 +4,9 @@ namespace CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
 
 public class CreateTodoListCommandValidator : AbstractValidator<CreateTodoListCommand>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ITenantDbContext _context;
 
-    public CreateTodoListCommandValidator(IApplicationDbContext context)
+    public CreateTodoListCommandValidator(ITenantDbContext context)
     {
         _context = context;
 

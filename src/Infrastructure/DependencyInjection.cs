@@ -40,7 +40,18 @@ public static class DependencyInjection
 #endif
         });
 
+        services.AddDbContext<TenantDbContext>((sp, options) =>
+        {
+
+#if (UseSQLite)
+            options.UseSqlite(connectionString);
+#else
+            options.UseSqlServer(connectionString);
+#endif
+        });
+
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<ITenantDbContext>(provider => provider.GetRequiredService<TenantDbContext>());
 
 #if (UseApiOnly)
         services.AddAuthentication()
@@ -80,6 +91,8 @@ public static class DependencyInjection
                 options.RegisterServiceToRunInJob<StartupServiceMigrateAnyDbContext<ApplicationDbContext>>();
                 //Add demo users to the database
                 options.RegisterServiceToRunInJob<StartupServicesIndividualAccountsAddDemoApplicationUsers>();
+
+                options.RegisterServiceToRunInJob<StartupServiceMigrateAnyDbContext<TenantDbContext>>();
             });
 #endif
 

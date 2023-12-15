@@ -14,9 +14,9 @@ public record UpdateTodoListCommand : IRequest
 
 public class UpdateTodoListCommandHandler : IRequestHandler<UpdateTodoListCommand>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ITenantDbContext _context;
 
-    public UpdateTodoListCommandHandler(IApplicationDbContext context)
+    public UpdateTodoListCommandHandler(ITenantDbContext context)
     {
         _context = context;
     }

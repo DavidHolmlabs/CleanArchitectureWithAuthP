@@ -1,6 +1,8 @@
-﻿namespace CleanArchitecture.Domain.Entities;
+﻿using AuthPermissions.BaseCode.CommonCode;
 
-public class TodoItem : BaseAuditableEntity
+namespace CleanArchitecture.Domain.Entities;
+
+public class TodoItem : BaseAuditableEntity, IDataKeyFilterReadWrite
 {
     public int ListId { get; set; }
 
@@ -11,6 +13,8 @@ public class TodoItem : BaseAuditableEntity
     public PriorityLevel Priority { get; set; }
 
     public DateTime? Reminder { get; set; }
+
+    public string? DataKey { get; set; }
 
     private bool _done;
     public bool Done

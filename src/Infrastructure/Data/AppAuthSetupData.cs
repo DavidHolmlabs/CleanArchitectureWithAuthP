@@ -19,9 +19,9 @@ namespace CleanArchitecture.Infrastructure.Data
                 "UserRead, UserRolesChange, RoleRead, TenantList, TenantAccessData"),
             new("TodoList Reader", "Can read TodoLists", "GetTodos"),
             new("TodoList Creator", "Can access TodoLists", "CreateTodoList"),
+            new("TodoList Total", "All TodoLists", "CreateTodoList, GetTodos, UpdateTodoList, DeleteTodoList, PurgeTodoLists"),
             //tenant roles
-            new("Tenant Admin", "Tenant-level admin",
-                "UserRead, UserRolesChange, RoleRead, InviteUsers", RoleTypes.TenantAdminAdd),
+            new("Tenant Admin", "Tenant-level admin", "UserRead, UserRolesChange, RoleRead, InviteUsers", RoleTypes.TenantAdminAdd),
             new("Enterprise", "Purge TodoLists", "PurgeTodoLists", RoleTypes.TenantAutoAdd)
         };
 
@@ -35,23 +35,17 @@ namespace CleanArchitecture.Infrastructure.Data
         public static readonly List<BulkLoadUserWithRolesTenant> UsersRolesDefinition = new()
         {
             new ("Super@g1.com", null, "SuperAdmin"),
-            new ("AppAdmin@g1.com", null, "App Admin"),
-            new("AppSupport@g1.com", null, "App Support, TodoList Creator"),
-            new ("extraUser@g1.com", null, "TodoList Creator"),
+            new ("AppAdmin@g1.com", null, "App Admin, TodoList Total"),
+            new("AppSupport@g1.com", null, "App Support, TodoList Total"),
+            new ("extraUser@g1.com", null, "TodoList Total"),
             //Company admins.
-            new ("admin@4uInc.com", null,
-                "TodoList Reader, TodoList Creator, Tenant Admin", tenantNameForDataKey: "4U Inc."),
-            new("admin1@Pets.com", null,
-                "TodoList Reader, TodoList Creator, Tenant Admin", tenantNameForDataKey: "Pets Ltd."),
+            new ("admin@4uInc.com", null, "TodoList Total, Tenant Admin", tenantNameForDataKey: "4U Inc."),
+            new("admin1@Pets.com", null, "TodoList Total, Tenant Admin", tenantNameForDataKey: "Pets Ltd."),
             //Company users.
-            new ("reader@4uInc.com", null,
-                "TodoList Reader", tenantNameForDataKey: "4U Inc."),
-            new ("creator@4uInc.com", null,
-                "TodoList Creator", tenantNameForDataKey: "4U Inc."),
-            new ("user1@Pets.com", null,
-                "TodoList Reader, TodoList Creator", tenantNameForDataKey: "Pets Ltd."),
-            new ("user1@BigR.com", null,
-                "TodoList Reader, TodoList Creator", tenantNameForDataKey: "Big Rocks Inc."),
+            new ("reader@4uInc.com", null,  "TodoList Reader", tenantNameForDataKey: "4U Inc."),
+            new ("creator@4uInc.com", null, "TodoList Creator", tenantNameForDataKey: "4U Inc."),
+            new ("user1@Pets.com", null, "TodoList Total", tenantNameForDataKey: "Pets Ltd."),
+            new ("user1@BigR.com", null, "TodoList Total", tenantNameForDataKey: "Big Rocks Inc."),
         };
     }
 }

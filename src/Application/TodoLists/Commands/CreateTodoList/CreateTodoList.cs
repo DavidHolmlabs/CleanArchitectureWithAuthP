@@ -13,9 +13,9 @@ public record CreateTodoListCommand : IRequest<int>
 
 public class CreateTodoListCommandHandler : IRequestHandler<CreateTodoListCommand, int>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ITenantDbContext _context;
 
-    public CreateTodoListCommandHandler(IApplicationDbContext context)
+    public CreateTodoListCommandHandler(ITenantDbContext context)
     {
         _context = context;
     }
