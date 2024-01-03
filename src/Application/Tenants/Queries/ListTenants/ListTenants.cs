@@ -4,7 +4,7 @@ using AuthPermissions.BaseCode.DataLayer.Classes;
 
 namespace CleanArchitecture.Application.Tenants.Queries.ListTenants;
 
-public record ListTenantsQuery : IRequest<List<Tenant>>
+public record ListTenantsQuery : IRequest<List<TenantDto>>
 {
 }
 
@@ -15,7 +15,7 @@ public class ListTenantsQueryValidator : AbstractValidator<ListTenantsQuery>
     }
 }
 
-public class ListTenantsQueryHandler : IRequestHandler<ListTenantsQuery, List<Tenant>>
+public class ListTenantsQueryHandler : IRequestHandler<ListTenantsQuery, List<TenantDto>>
 {
     private readonly IAuthTenantAdminService _authTenantAdmin;
 
@@ -24,9 +24,15 @@ public class ListTenantsQueryHandler : IRequestHandler<ListTenantsQuery, List<Te
         _authTenantAdmin = authTenantAdmin;
     }
 
-    public async Task<List<Tenant>> Handle(ListTenantsQuery request, CancellationToken cancellationToken)
+    public async Task<List<TenantDto>> Handle(ListTenantsQuery request, CancellationToken cancellationToken)
     {
         List<Tenant> tenants = await _authTenantAdmin.QueryTenants().ToListAsync();
-        return tenants;
+        return tenants.Select(tenant => new TenantDto
+        {
+            IsHierarchical = tenant.IsHierarchical,
+            TenantId = tenant.TenantId,
+            ParentDataKey = tenant.ParentDataKey,
+            TenantFullName = tenant.TenantFullName
+        }).ToList();
     }
 }

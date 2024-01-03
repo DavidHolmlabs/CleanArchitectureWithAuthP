@@ -1,4 +1,4 @@
-﻿using AuthPermissions.BaseCode.DataLayer.Classes;
+﻿using CleanArchitecture.Application.Tenants;
 using CleanArchitecture.Application.Tenants.Queries.ListTenants;
 
 namespace CleanArchitecture.Web.Endpoints;
@@ -12,7 +12,7 @@ public class Tenants : EndpointGroupBase
             .MapGet(GetTenants);
     }
 
-    public async Task<List<Tenant>> GetTenants(ISender sender)
+    public async Task<List<TenantDto>> GetTenants(ISender sender)
     {
         return await sender.Send(new ListTenantsQuery());
     }

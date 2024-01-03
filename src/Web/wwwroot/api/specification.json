@@ -172,7 +172,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Tenant"
+                    "$ref": "#/components/schemas/TenantDto"
                   }
                 }
               }
@@ -862,6 +862,25 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "TenantDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tenantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parentDataKey": {
+            "type": "string"
+          },
+          "tenantFullName": {
+            "type": "string"
+          },
+          "isHierarchical": {
+            "type": "boolean"
           }
         }
       },

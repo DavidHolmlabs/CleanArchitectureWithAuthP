@@ -2,7 +2,7 @@
 
 namespace CleanArchitecture.Domain.Entities;
 
-public class TodoList : BaseAuditableEntity, IDataKeyFilterReadWrite
+public class TodoList : BaseAuditableEntity, IDataKeyFilterReadWrite, IDataKeyFilterReadOnly
 {
     public string? Title { get; set; }
 

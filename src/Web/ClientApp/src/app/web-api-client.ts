@@ -414,7 +414,7 @@ export class RolesClient implements IRolesClient {
 }
 
 export interface ITenantsClient {
-    getTenants(): Observable<Tenant[]>;
+    getTenants(): Observable<TenantDto[]>;
 }
 
 @Injectable({
@@ -430,7 +430,7 @@ export class TenantsClient implements ITenantsClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getTenants(): Observable<Tenant[]> {
+    getTenants(): Observable<TenantDto[]> {
         let url_ = this.baseUrl + "/api/Tenants";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -449,14 +449,14 @@ export class TenantsClient implements ITenantsClient {
                 try {
                     return this.processGetTenants(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<Tenant[]>;
+                    return _observableThrow(e) as any as Observable<TenantDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<Tenant[]>;
+                return _observableThrow(response_) as any as Observable<TenantDto[]>;
         }));
     }
 
-    protected processGetTenants(response: HttpResponseBase): Observable<Tenant[]> {
+    protected processGetTenants(response: HttpResponseBase): Observable<TenantDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -470,7 +470,7 @@ export class TenantsClient implements ITenantsClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Tenant.fromJS(item));
+                    result200!.push(TenantDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -1687,6 +1687,54 @@ export interface IRoleWithPermissionNamesDto {
     roleType?: RoleTypes;
     packedPermissionsInRole: string;
     permissionNames?: string[] | undefined;
+}
+
+export class TenantDto implements ITenantDto {
+    tenantId?: number;
+    parentDataKey?: string;
+    tenantFullName?: string;
+    isHierarchical?: boolean;
+
+    constructor(data?: ITenantDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.parentDataKey = _data["parentDataKey"];
+            this.tenantFullName = _data["tenantFullName"];
+            this.isHierarchical = _data["isHierarchical"];
+        }
+    }
+
+    static fromJS(data: any): TenantDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["parentDataKey"] = this.parentDataKey;
+        data["tenantFullName"] = this.tenantFullName;
+        data["isHierarchical"] = this.isHierarchical;
+        return data;
+    }
+}
+
+export interface ITenantDto {
+    tenantId?: number;
+    parentDataKey?: string;
+    tenantFullName?: string;
+    isHierarchical?: boolean;
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {

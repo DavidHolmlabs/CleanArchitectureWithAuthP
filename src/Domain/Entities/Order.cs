@@ -2,7 +2,7 @@
 
 namespace CleanArchitecture.Domain.Entities;
 
-public class Order : BaseAuditableEntity, IDataKeyFilterReadWrite
+public class Order : BaseAuditableEntity, IDataKeyFilterReadWrite, IDataKeyFilterReadOnly
 {
     public int ProductId { get; set; }
 

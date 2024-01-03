@@ -59,9 +59,9 @@ namespace CleanArchitecture.Infrastructure.Data
                 if (entityType?.ClrType?.BaseType?.Name == typeof(ValueObject).Name)
                     continue;
 
-                if (typeof(IDataKeyFilterReadWrite).IsAssignableFrom(entityType?.ClrType))
+                if (typeof(IDataKeyFilterReadOnly).IsAssignableFrom(entityType?.ClrType))
                 {
-                    entityType.AddSingleTenantReadWriteQueryFilter(this);
+                    entityType.AddHierarchicalTenantReadOnlyQueryFilter(this);
                 }
                 else if (typeof(INoDataKey).IsAssignableFrom(entityType?.ClrType))
                 {

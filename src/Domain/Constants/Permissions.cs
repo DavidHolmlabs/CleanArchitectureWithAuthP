@@ -21,10 +21,6 @@ public enum Permissions : ushort //Must be ushort to work with AuthP
     [Display(GroupName = "TodoLists", Name = "Purge", Description = "Can Purge Todo List")]
     PurgeTodoLists = 14,
 
-    [Display(GroupName = "SuperAdmin", Name = "AccessAll", Description = "This allows the user to access every feature", AutoGenerateFilter = true)]
-    AccessAll = ushort.MaxValue,
-
-
     //Used by tenant-level admin user
     [Obsolete]
     [Display(GroupName = "Employees", Description = "Can read tenant employees")]
@@ -35,7 +31,6 @@ public enum Permissions : ushort //Must be ushort to work with AuthP
 
     [Display(GroupName = "Employees", Description = "Can invite new users to join the tenant")]
     InviteUsers = 932,
-
 
     //40_000 - User admin
     [Display(GroupName = "UserAdmin", Name = "Read users", Description = "Can list User")]
@@ -78,4 +73,49 @@ public enum Permissions : ushort //Must be ushort to work with AuthP
     [Display(GroupName = "TenantAdmin", Name = "Access other tenant data", Description = "Sets DataKey of user to another tenant", AutoGenerateFilter = true)]
     TenantAccessData = 42_005,
 
+
+
+    //Here is an example of detailed control over some feature
+    [Display(GroupName = "Stock", Name = "Read", Description = "Can read stock")]
+    StockRead = 510,
+    [Display(GroupName = "Stock", Name = "Add new", Description = "Can add a new stock item")]
+    StockAddNew = 513,
+    [Display(GroupName = "Stock", Name = "Remove", Description = "Can remove stock")]
+    StockRemove = 514,
+
+    [Display(GroupName = "Sales", Name = "Read", Description = "Can read any sales")]
+    SalesRead = 520,
+    [Display(GroupName = "Sales", Name = "Sell", Description = "Can sell items from stock")]
+    SalesSell = 521,
+    [Display(GroupName = "Sales", Name = "Return", Description = "Can return an item to stock")]
+    SalesReturn = 522,
+
+    //----------------------------------------------------
+    //This is an example of what to do with permission you don't used anymore.
+    //You don't want its number to be reused as it could cause problems 
+    //Just mark it as obsolete and the PermissionDisplay code won't show it
+    [Obsolete]
+    [Display(GroupName = "Old", Name = "Not used", Description = "example of old permission")]
+    OldPermissionNotUsed = 1_000,
+
+    //----------------------------------------------------
+    // A enum member with no <see cref="DisplayAttribute"/> can be used, but its not shown in the PermissionDisplay at all
+    // Useful if are working on new permissions but you don't want it to be used by anyone yet 
+    AnotherPermission = 2_000,
+
+    //----------------------------------------------------
+    //Admin section
+
+    //43_000
+    [Display(GroupName = "AppStatus", Name = "list active app statues", Description = "Can list active statues", AutoGenerateFilter = true)]
+    AppStatusList = 43_000,
+    [Display(GroupName = "AppStatus", Name = "Stop all users accessing app", Description = "Stop all users, apart from user who set this", AutoGenerateFilter = true)]
+    AppStatusAllDown = 43_002,
+    [Display(GroupName = "AppStatus", Name = "Stop users linked to specific tenant", Description = "Stop users linked to specific tenant", AutoGenerateFilter = true)]
+    AppStatusTenantDown = 43_003,
+    [Display(GroupName = "AppStatus", Name = "Remove an active app statue", Description = "Can turn off any active statue", AutoGenerateFilter = true)]
+    AppStatusRemove = 43_005,
+
+    [Display(GroupName = "SuperAdmin", Name = "AccessAll", Description = "This allows the user to access every feature", AutoGenerateFilter = true)]
+    AccessAll = ushort.MaxValue,
 }

@@ -72,7 +72,7 @@ public static class DependencyInjection
 
         services.RegisterAuthPermissions<Permissions>(options =>
         {
-            options.TenantType = TenantTypes.SingleLevel;
+            options.TenantType = TenantTypes.HierarchicalTenant;
             options.LinkToTenantType = LinkToTenantTypes.OnlyAppUsers;
             options.EncryptionKey = configuration[nameof(AuthPermissionsOptions.EncryptionKey)];
             options.PathToFolderToLock = webRootPath;
