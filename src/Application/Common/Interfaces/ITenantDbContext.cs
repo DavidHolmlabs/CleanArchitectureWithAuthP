@@ -7,5 +7,9 @@ public interface ITenantDbContext
 
     DbSet<TodoItem> TodoItems { get; }
 
+    DbSet<Product> Products { get; }
+
+    DbSet<Order> Orders { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

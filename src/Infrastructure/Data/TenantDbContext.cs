@@ -29,6 +29,10 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 
+        public DbSet<Product> Products => Set<Product>();
+
+        public DbSet<Order> Orders => Set<Order>();
+
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             this.MarkWithDataKeyIfNeeded(DataKey);
@@ -59,11 +63,13 @@ namespace CleanArchitecture.Infrastructure.Data
                 {
                     entityType.AddSingleTenantReadWriteQueryFilter(this);
                 }
-                else
+                else if (typeof(INoDataKey).IsAssignableFrom(entityType?.ClrType))
                 {
+                    continue;
+                }
+                else
                     throw new Exception(
                         $"You haven't added the {nameof(IDataKeyFilterReadWrite)} to the entity {entityType?.ClrType.Name}");
-                }
 
                 foreach (var mutableProperty in entityType.GetProperties())
                 {
@@ -75,7 +81,5 @@ namespace CleanArchitecture.Infrastructure.Data
                 }
             }
         }
-
-
     }
 }
