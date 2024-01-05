@@ -13,11 +13,14 @@ code {
   color: #e01a76;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
+$primary: #3f9289;
+$secondary: #7A7986;
+$success: #00AF19;
+$danger: #DD2727;
+$warning: #FFAD0F;
+$info: #6FAABB;
+$light: #F7F7F7;
+$dark: #222222;
 
 /* Importing Bootstrap SCSS file. */
 @import "node_modules/bootstrap/scss/bootstrap";
