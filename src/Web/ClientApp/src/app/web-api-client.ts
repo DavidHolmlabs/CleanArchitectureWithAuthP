@@ -17,6 +17,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAuthUsersClient {
     getAuthUsers(): Observable<AuthUser[]>;
+    getAuthUserInfo(): Observable<AuthUserInfoDto>;
 }
 
 @Injectable({
@@ -86,11 +87,60 @@ export class AuthUsersClient implements IAuthUsersClient {
         }
         return _observableOf(null as any);
     }
+
+    getAuthUserInfo(): Observable<AuthUserInfoDto> {
+        let url_ = this.baseUrl + "/api/AuthUsers/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAuthUserInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAuthUserInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AuthUserInfoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AuthUserInfoDto>;
+        }));
+    }
+
+    protected processGetAuthUserInfo(response: HttpResponseBase): Observable<AuthUserInfoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AuthUserInfoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface IOrdersClient {
-    getOrders(): Observable<Order[]>;
+    getOrders(): Observable<OrderDto[]>;
     createOrder(command: CreateOrderCommand): Observable<Order>;
+    availableOrders(): Observable<OrderDto[]>;
 }
 
 @Injectable({
@@ -106,7 +156,7 @@ export class OrdersClient implements IOrdersClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getOrders(): Observable<Order[]> {
+    getOrders(): Observable<OrderDto[]> {
         let url_ = this.baseUrl + "/api/Orders";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -125,14 +175,14 @@ export class OrdersClient implements IOrdersClient {
                 try {
                     return this.processGetOrders(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<Order[]>;
+                    return _observableThrow(e) as any as Observable<OrderDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<Order[]>;
+                return _observableThrow(response_) as any as Observable<OrderDto[]>;
         }));
     }
 
-    protected processGetOrders(response: HttpResponseBase): Observable<Order[]> {
+    protected processGetOrders(response: HttpResponseBase): Observable<OrderDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -146,7 +196,7 @@ export class OrdersClient implements IOrdersClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Order.fromJS(item));
+                    result200!.push(OrderDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -212,11 +262,67 @@ export class OrdersClient implements IOrdersClient {
         }
         return _observableOf(null as any);
     }
+
+    availableOrders(): Observable<OrderDto[]> {
+        let url_ = this.baseUrl + "/api/Orders/available";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAvailableOrders(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAvailableOrders(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<OrderDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<OrderDto[]>;
+        }));
+    }
+
+    protected processAvailableOrders(response: HttpResponseBase): Observable<OrderDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(OrderDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface IProductsClient {
     getProducts(): Observable<Product[]>;
     createProduct(command: CreateProductCommand): Observable<Product>;
+    updateProduct(id: number, command: UpdateProductCommand): Observable<void>;
 }
 
 @Injectable({
@@ -330,6 +436,57 @@ export class ProductsClient implements IProductsClient {
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = Product.fromJS(resultData200);
             return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateProduct(id: number, command: UpdateProductCommand): Observable<void> {
+        let url_ = this.baseUrl + "/api/Products/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateProduct(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -1342,6 +1499,146 @@ export interface ITenant {
     nameToUseForError?: string | undefined;
 }
 
+export class AuthUserInfoDto implements IAuthUserInfoDto {
+    email?: string;
+    claims?: { [key: string]: string; };
+    dataKey?: string | undefined;
+    userId?: string | undefined;
+    tenant?: Tenant | undefined;
+    roles?: UserToRole[];
+    summary?: string;
+    jwt?: string;
+
+    constructor(data?: IAuthUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            if (_data["claims"]) {
+                this.claims = {} as any;
+                for (let key in _data["claims"]) {
+                    if (_data["claims"].hasOwnProperty(key))
+                        (<any>this.claims)![key] = _data["claims"][key];
+                }
+            }
+            this.dataKey = _data["dataKey"];
+            this.userId = _data["userId"];
+            this.tenant = _data["tenant"] ? Tenant.fromJS(_data["tenant"]) : <any>undefined;
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(UserToRole.fromJS(item));
+            }
+            this.summary = _data["summary"];
+            this.jwt = _data["jwt"];
+        }
+    }
+
+    static fromJS(data: any): AuthUserInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthUserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        if (this.claims) {
+            data["claims"] = {};
+            for (let key in this.claims) {
+                if (this.claims.hasOwnProperty(key))
+                    (<any>data["claims"])[key] = (<any>this.claims)[key];
+            }
+        }
+        data["dataKey"] = this.dataKey;
+        data["userId"] = this.userId;
+        data["tenant"] = this.tenant ? this.tenant.toJSON() : <any>undefined;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item.toJSON());
+        }
+        data["summary"] = this.summary;
+        data["jwt"] = this.jwt;
+        return data;
+    }
+}
+
+export interface IAuthUserInfoDto {
+    email?: string;
+    claims?: { [key: string]: string; };
+    dataKey?: string | undefined;
+    userId?: string | undefined;
+    tenant?: Tenant | undefined;
+    roles?: UserToRole[];
+    summary?: string;
+    jwt?: string;
+}
+
+export class OrderDto implements IOrderDto {
+    productId?: number;
+    product?: Product | undefined;
+    dataKey?: string | undefined;
+    tenant?: TenantDto | undefined;
+    quantity?: number;
+    endDate?: Date;
+
+    constructor(data?: IOrderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
+            this.dataKey = _data["dataKey"];
+            this.tenant = _data["tenant"] ? TenantDto.fromJS(_data["tenant"]) : <any>undefined;
+            this.quantity = _data["quantity"];
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): OrderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
+        data["dataKey"] = this.dataKey;
+        data["tenant"] = this.tenant ? this.tenant.toJSON() : <any>undefined;
+        data["quantity"] = this.quantity;
+        data["endDate"] = this.endDate ? formatDate(this.endDate) : <any>undefined;
+        return data;
+    }
+}
+
+export interface IOrderDto {
+    productId?: number;
+    product?: Product | undefined;
+    dataKey?: string | undefined;
+    tenant?: TenantDto | undefined;
+    quantity?: number;
+    endDate?: Date;
+}
+
 export abstract class BaseEntity implements IBaseEntity {
     id?: number;
     domainEvents?: BaseEvent[];
@@ -1431,55 +1728,6 @@ export interface IBaseAuditableEntity extends IBaseEntity {
     lastModifiedBy?: string | undefined;
 }
 
-export class Order extends BaseAuditableEntity implements IOrder {
-    productId?: number;
-    product?: Product | undefined;
-    dataKey?: string | undefined;
-    quantity?: number;
-    endDate?: Date;
-
-    constructor(data?: IOrder) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.productId = _data["productId"];
-            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
-            this.dataKey = _data["dataKey"];
-            this.quantity = _data["quantity"];
-            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static override fromJS(data: any): Order {
-        data = typeof data === 'object' ? data : {};
-        let result = new Order();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
-        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
-        data["dataKey"] = this.dataKey;
-        data["quantity"] = this.quantity;
-        data["endDate"] = this.endDate ? formatDate(this.endDate) : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IOrder extends IBaseAuditableEntity {
-    productId?: number;
-    product?: Product | undefined;
-    dataKey?: string | undefined;
-    quantity?: number;
-    endDate?: Date;
-}
-
 export class Product extends BaseAuditableEntity implements IProduct {
     name?: string;
     description?: string;
@@ -1543,6 +1791,111 @@ export abstract class BaseEvent implements IBaseEvent {
 }
 
 export interface IBaseEvent {
+}
+
+export class TenantDto implements ITenantDto {
+    tenantId?: number;
+    dataKey?: string;
+    parentDataKey?: string;
+    name?: string;
+    tenantFullName?: string;
+    isHierarchical?: boolean;
+
+    constructor(data?: ITenantDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.dataKey = _data["dataKey"];
+            this.parentDataKey = _data["parentDataKey"];
+            this.name = _data["name"];
+            this.tenantFullName = _data["tenantFullName"];
+            this.isHierarchical = _data["isHierarchical"];
+        }
+    }
+
+    static fromJS(data: any): TenantDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["dataKey"] = this.dataKey;
+        data["parentDataKey"] = this.parentDataKey;
+        data["name"] = this.name;
+        data["tenantFullName"] = this.tenantFullName;
+        data["isHierarchical"] = this.isHierarchical;
+        return data;
+    }
+}
+
+export interface ITenantDto {
+    tenantId?: number;
+    dataKey?: string;
+    parentDataKey?: string;
+    name?: string;
+    tenantFullName?: string;
+    isHierarchical?: boolean;
+}
+
+export class Order extends BaseAuditableEntity implements IOrder {
+    productId?: number;
+    product?: Product | undefined;
+    dataKey?: string | undefined;
+    quantity?: number;
+    endDate?: Date;
+
+    constructor(data?: IOrder) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.productId = _data["productId"];
+            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
+            this.dataKey = _data["dataKey"];
+            this.quantity = _data["quantity"];
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): Order {
+        data = typeof data === 'object' ? data : {};
+        let result = new Order();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
+        data["dataKey"] = this.dataKey;
+        data["quantity"] = this.quantity;
+        data["endDate"] = this.endDate ? formatDate(this.endDate) : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IOrder extends IBaseAuditableEntity {
+    productId?: number;
+    product?: Product | undefined;
+    dataKey?: string | undefined;
+    quantity?: number;
+    endDate?: Date;
 }
 
 export class CreateOrderCommand implements ICreateOrderCommand {
@@ -1629,6 +1982,50 @@ export interface ICreateProductCommand {
     description?: string;
 }
 
+export class UpdateProductCommand implements IUpdateProductCommand {
+    id?: number;
+    name?: string;
+    description?: string;
+
+    constructor(data?: IUpdateProductCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): UpdateProductCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProductCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface IUpdateProductCommand {
+    id?: number;
+    name?: string;
+    description?: string;
+}
+
 export class RoleWithPermissionNamesDto implements IRoleWithPermissionNamesDto {
     roleName!: string;
     description?: string | undefined;
@@ -1687,54 +2084,6 @@ export interface IRoleWithPermissionNamesDto {
     roleType?: RoleTypes;
     packedPermissionsInRole: string;
     permissionNames?: string[] | undefined;
-}
-
-export class TenantDto implements ITenantDto {
-    tenantId?: number;
-    parentDataKey?: string;
-    tenantFullName?: string;
-    isHierarchical?: boolean;
-
-    constructor(data?: ITenantDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.tenantId = _data["tenantId"];
-            this.parentDataKey = _data["parentDataKey"];
-            this.tenantFullName = _data["tenantFullName"];
-            this.isHierarchical = _data["isHierarchical"];
-        }
-    }
-
-    static fromJS(data: any): TenantDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["parentDataKey"] = this.parentDataKey;
-        data["tenantFullName"] = this.tenantFullName;
-        data["isHierarchical"] = this.isHierarchical;
-        return data;
-    }
-}
-
-export interface ITenantDto {
-    tenantId?: number;
-    parentDataKey?: string;
-    tenantFullName?: string;
-    isHierarchical?: boolean;
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {

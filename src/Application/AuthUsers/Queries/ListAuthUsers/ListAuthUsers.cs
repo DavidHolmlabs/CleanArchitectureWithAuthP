@@ -28,6 +28,12 @@ public class ListAuthUsersQueryHandler : IRequestHandler<ListAuthUsersQuery, Lis
 
     public async Task<List<AuthUser>> Handle(ListAuthUsersQuery request, CancellationToken cancellationToken)
     {
-        return await _authUsersAdmin.QueryAuthUsers(_user.DataKey).ToListAsync();
+        var res = await _authUsersAdmin
+            .QueryAuthUsers(_user.DataKey)
+            .Include(x => x.UserRoles)
+            .Include(x => x.UserTenant)
+            .ToListAsync();
+
+        return res;
     }
 }

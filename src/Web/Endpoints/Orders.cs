@@ -1,4 +1,6 @@
-﻿using CleanArchitecture.Application.Orders.Commands.CreateOrder;
+﻿using CleanArchitecture.Application.Orders;
+using CleanArchitecture.Application.Orders.Commands.CreateOrder;
+using CleanArchitecture.Application.Orders.Queries.AvailableOrders;
 using CleanArchitecture.Application.Orders.Queries.ListOrders;
 using CleanArchitecture.Domain.Entities;
 
@@ -11,12 +13,18 @@ public class Orders : EndpointGroupBase
         app.MapGroup(this)
             .RequireAuthorization()
             .MapGet(GetOrders)
+            .MapGet(AvailableOrders, "available")
             .MapPost(CreateOrder);
     }
 
-    public async Task<List<Order>> GetOrders(ISender sender)
+    public async Task<List<OrderDto>> GetOrders(ISender sender)
     {
         return await sender.Send(new ListOrdersQuery());
+    }
+
+    public async Task<List<OrderDto>> AvailableOrders(ISender sender)
+    {
+        return await sender.Send(new AvailableOrdersQuery());
     }
 
     public async Task<Order> CreateOrder(ISender sender, [Microsoft.AspNetCore.Mvc.FromBody] CreateOrderCommand command)

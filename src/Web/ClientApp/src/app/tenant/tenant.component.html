@@ -1,0 +1,20 @@
+<h1 id="tableLabel">Tenants</h1>
+
+<p *ngIf="!tenants?.length"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="tenants.length">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>DataKey</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tenant of tenants">
+      <td>{{ tenant.tenantId }}</td>
+      <td>{{ tenant.dataKey }}</td>
+      <td>{{ tenant.tenantFullName }}</td>
+    </tr>
+  </tbody>
+</table>

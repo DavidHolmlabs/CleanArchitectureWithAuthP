@@ -11,7 +11,10 @@ dotnet new ca-usecase --name ListRoles --feature-name Roles --usecase-type query
 ## Products
 dotnet new ca-usecase --name ListProducts --feature-name Products --usecase-type query --return-type List<Product>
 dotnet new ca-usecase --name CreateProduct --feature-name Products --usecase-type command --return-type Product
+dotnet new ca-usecase --name UpdateProduct --feature-name Products --usecase-type command --return-type Product
 
 ## Orders
 dotnet new ca-usecase --name ListOrders --feature-name Orders --usecase-type query --return-type List<Order>
 dotnet new ca-usecase --name CreateOrder --feature-name Orders --usecase-type command --return-type Order
+dotnet new ca-usecase --name AvailableOrders --feature-name Orders --usecase-type query --return-type List<OrderDto>
+

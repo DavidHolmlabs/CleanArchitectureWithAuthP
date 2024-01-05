@@ -13,3 +13,16 @@ public interface ITenantDbContext
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
+
+public interface INonTenantDbContext
+{
+    DbSet<TodoList> TodoLists { get; }
+
+    DbSet<TodoItem> TodoItems { get; }
+
+    DbSet<Product> Products { get; }
+
+    DbSet<Order> Orders { get; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+}

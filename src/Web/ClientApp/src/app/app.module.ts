@@ -12,6 +12,11 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { TodoComponent } from './todo/todo.component';
+import { OrderComponent } from './order/order.component';
+import { TenantComponent } from './tenant/tenant.component';
+import { ProductComponent } from './product/product.component';
+import { UserComponent } from './user/user.component';
+import { MeComponent } from './me/me.component';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -22,7 +27,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    TodoComponent
+    TodoComponent,
+    OrderComponent,
+    ProductComponent,
+    TenantComponent,
+    UserComponent,
+    MeComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -32,7 +42,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'todo', component: TodoComponent }
+      { path: 'todo', component: TodoComponent },
+      { path: 'order', component: OrderComponent },
+      { path: 'product', component: ProductComponent },
+      { path: 'tenant', component: TenantComponent },
+      { path: 'user', component: UserComponent },
+      { path: 'me', component: MeComponent },
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot()

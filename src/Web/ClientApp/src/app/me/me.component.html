@@ -1,0 +1,31 @@
+<h1>Who am I?</h1>
+
+<p *ngIf="!me"><em>Loading...</em></p>
+
+<p *ngIf="me">{{ me.summary }}</p>
+
+<dl *ngIf="me">
+    <dt class="col-sm-2">Email</dt>
+    <dd class="col-sm-10">{{ me.email }}</dd>
+    <dt class="col-sm-2">DataKey</dt>
+    <dd class="col-sm-10">{{ me.dataKey }}</dd>
+    <dt class="col-sm-2">Tenant</dt>
+    <dd class="col-sm-10">{{ me.tenant.tenantFullName }}</dd>
+    <dt class="col-sm-2">UserId</dt>
+    <dd class="col-sm-10">{{ me.userId}}</dd>
+</dl>
+
+<h2 *ngIf="me">Claims</h2>
+
+<table class="table" *ngIf="me">
+    <tr *ngFor="let claim of me.claims | keyvalue">
+        <td>{{ claim.key }}</td>
+        <td>{{ claim.value }}</td>
+    </tr>
+</table>
+
+<h2 *ngIf="me">Jwt</h2>
+
+<div class="form-group">
+    <textarea *ngIf="me" rows="20" cols="100">{{ me.jwt }}</textarea>
+</div>

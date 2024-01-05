@@ -4,6 +4,7 @@ using AuthPermissions.AspNetCore.Services;
 using AuthPermissions.AspNetCore.StartupServices;
 using AuthPermissions.BaseCode;
 using AuthPermissions.BaseCode.SetupCode;
+using AuthPermissions.SupportCode.DownStatusCode;
 using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Domain.Constants;
 using CleanArchitecture.Infrastructure;
@@ -50,8 +51,19 @@ public static class DependencyInjection
 #endif
         });
 
+        services.AddDbContext<NonTenantDbContext>((sp, options) =>
+        {
+
+#if (UseSQLite)
+            options.UseSqlite(connectionString);
+#else
+            options.UseSqlServer(connectionString);
+#endif
+        });
+
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<ITenantDbContext>(provider => provider.GetRequiredService<TenantDbContext>());
+        services.AddScoped<INonTenantDbContext>(provider => provider.GetRequiredService<NonTenantDbContext>());
 
 #if (UseApiOnly)
         services.AddAuthentication()
@@ -79,6 +91,8 @@ public static class DependencyInjection
         })
             .UsingEfCoreSqlServer(connectionString)
             .IndividualAccountsAuthentication<ApplicationUser>()
+            .RegisterAddClaimToUser<AddTenantNameClaim>()
+            .RegisterAddClaimToUser<AddCertificationIdsClaims>()
             .AddRolesPermissionsIfEmpty(AppAuthSetupData.RolesDefinition)
             .AddTenantsIfEmpty(AppAuthSetupData.TenantDefinition)
             .AddAuthUsersIfEmpty(AppAuthSetupData.UsersRolesDefinition)

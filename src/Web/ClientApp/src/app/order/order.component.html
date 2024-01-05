@@ -1,0 +1,85 @@
+<h1 id="tableLabel">Orders</h1>
+
+<p *ngIf="!orders?.length"><em>Loading...</em></p>
+
+<button class="btn btn-primary" (click)="showOrderDetailsModal(orderDetailsModalTemplate)">Purchase</button>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="orders.length">
+    <thead>
+        <tr>
+            <th>DataKey</th>
+            <th>Tenant</th>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let order of orders">
+            <td>{{ order.dataKey }}</td>
+            <td>{{ order.tenant?.tenantFullName }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.quantity }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="tableLabel">Available Orders</h2>
+
+<p *ngIf="!availableOrders?.length"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="availableOrders.length">
+    <thead>
+        <tr>
+            <th>DataKey</th>
+            <th>Tenant</th>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let order of availableOrders">
+            <td>{{ order.dataKey }}</td>
+            <td>{{ order.tenant.tenantFullName }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.quantity }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #orderDetailsModalTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Order Details</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="orderDetailsModalRef.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="list">Product</label>
+            <select class="form-control" [(ngModel)]="orderDetailsEditor.productId">
+                <option [ngValue]="product.id" *ngFor="let product of products">{{ product.name }}</option>
+            </select>
+        </div>
+
+        <div class="form">
+            <div class="form-group">
+                <label for="note">Quantity</label>
+                <input id="quantity" class="form-control" type="number" [(ngModel)]="orderDetailsEditor.quantity" />
+            </div>
+        </div>
+        <div *ngIf="debug">
+            <pre>{{ orderDetailsEditor | json }}</pre>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="clearfix">
+            <div class="float-start">
+                <button class="btn btn-default text-danger" (click)="deleteOrder(activeOrder)">Delete</button>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-default" (click)="orderDetailsModalRef.hide()">Cancel</button>
+                <button class="btn btn-primary" (click)="purchase()">Purchase</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

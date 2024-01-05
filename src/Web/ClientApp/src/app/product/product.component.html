@@ -1,0 +1,58 @@
+<button class="btn btn-primary" (click)="createProduct()">Create new product</button>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products.length">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of products">
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>
+                <button *ngIf="product.id != 0" (click)="showProductDetailsModal(productDetailsModalTemplate, product)"
+                        class="btn btn-default btn-xs" role="button">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #productDetailsModalTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Product Details</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="productDetailsModalRef.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form">
+            <div class="form-group">
+                <label for="note">Name</label>
+                <input id="note" class="form-control" type="text" [(ngModel)]="productDetailsEditor.name" />
+            </div>
+            <div class="form-group">
+                <label for="note">Description</label>
+                <textarea id="description" class="form-control" rows="3" [(ngModel)]="productDetailsEditor.description"></textarea>
+            </div>
+        </div>
+        <div *ngIf="debug">
+            <pre>{{ productDetailsEditor | json }}</pre>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="clearfix">
+            <div class="float-start">
+                <button class="btn btn-default text-danger" (click)="deleteProduct(selectedProduct)">Delete</button>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-default" (click)="productDetailsModalRef.hide()">Cancel</button>
+                <button class="btn btn-primary" (click)="updateProductDetails()">Update</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
