@@ -17,6 +17,7 @@ import { TenantComponent } from './tenant/tenant.component';
 import { ProductComponent } from './product/product.component';
 import { UserComponent } from './user/user.component';
 import { MeComponent } from './me/me.component';
+import { CreateDemoComponent } from './create-demo/create-demo.component';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -32,7 +33,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProductComponent,
     TenantComponent,
     UserComponent,
-    MeComponent
+    MeComponent,
+    CreateDemoComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -48,6 +50,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { path: 'tenant', component: TenantComponent },
       { path: 'user', component: UserComponent },
       { path: 'me', component: MeComponent },
+      { path: 'demo', component: CreateDemoComponent },
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot()

@@ -29,6 +29,26 @@
         }
       }
     },
+    "/api/AuthUsers/nav-menu": {
+      "get": {
+        "tags": [
+          "AuthUsers"
+        ],
+        "operationId": "GetNavMenu",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NavMenuDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/AuthUsers/me": {
       "get": {
         "tags": [
@@ -42,6 +62,38 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthUserInfoDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Demo": {
+      "post": {
+        "tags": [
+          "Demo"
+        ],
+        "operationId": "CreateDemo",
+        "requestBody": {
+          "x-name": "createDemoCommand",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDemoCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IStatusGeneric"
                 }
               }
             }
@@ -774,6 +826,28 @@
           }
         }
       },
+      "NavMenuDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tenant": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Tenant"
+              }
+            ]
+          },
+          "authUser": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AuthUser"
+              }
+            ]
+          }
+        }
+      },
       "AuthUserInfoDto": {
         "type": "object",
         "additionalProperties": false,
@@ -814,6 +888,87 @@
           },
           "jwt": {
             "type": "string"
+          }
+        }
+      },
+      "IStatusGeneric": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ErrorGeneric"
+            }
+          },
+          "isValid": {
+            "type": "boolean"
+          },
+          "hasErrors": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ErrorGeneric": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "header": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorResult": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ValidationResult"
+              }
+            ]
+          },
+          "debugData": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ValidationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "memberNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateDemoCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tenantName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

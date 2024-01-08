@@ -17,6 +17,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAuthUsersClient {
     getAuthUsers(): Observable<AuthUser[]>;
+    getNavMenu(): Observable<NavMenuDto>;
     getAuthUserInfo(): Observable<AuthUserInfoDto>;
 }
 
@@ -88,6 +89,54 @@ export class AuthUsersClient implements IAuthUsersClient {
         return _observableOf(null as any);
     }
 
+    getNavMenu(): Observable<NavMenuDto> {
+        let url_ = this.baseUrl + "/api/AuthUsers/nav-menu";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetNavMenu(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetNavMenu(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<NavMenuDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<NavMenuDto>;
+        }));
+    }
+
+    protected processGetNavMenu(response: HttpResponseBase): Observable<NavMenuDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = NavMenuDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     getAuthUserInfo(): Observable<AuthUserInfoDto> {
         let url_ = this.baseUrl + "/api/AuthUsers/me";
         url_ = url_.replace(/[?&]$/, "");
@@ -126,6 +175,76 @@ export class AuthUsersClient implements IAuthUsersClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = AuthUserInfoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+export interface IDemoClient {
+    createDemo(createDemoCommand: CreateDemoCommand): Observable<IStatusGeneric>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class DemoClient implements IDemoClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    createDemo(createDemoCommand: CreateDemoCommand): Observable<IStatusGeneric> {
+        let url_ = this.baseUrl + "/api/Demo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(createDemoCommand);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateDemo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateDemo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<IStatusGeneric>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<IStatusGeneric>;
+        }));
+    }
+
+    protected processCreateDemo(response: HttpResponseBase): Observable<IStatusGeneric> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = IStatusGeneric.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1499,6 +1618,46 @@ export interface ITenant {
     nameToUseForError?: string | undefined;
 }
 
+export class NavMenuDto implements INavMenuDto {
+    tenant?: Tenant | undefined;
+    authUser?: AuthUser | undefined;
+
+    constructor(data?: INavMenuDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenant = _data["tenant"] ? Tenant.fromJS(_data["tenant"]) : <any>undefined;
+            this.authUser = _data["authUser"] ? AuthUser.fromJS(_data["authUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NavMenuDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NavMenuDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenant"] = this.tenant ? this.tenant.toJSON() : <any>undefined;
+        data["authUser"] = this.authUser ? this.authUser.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface INavMenuDto {
+    tenant?: Tenant | undefined;
+    authUser?: AuthUser | undefined;
+}
+
 export class AuthUserInfoDto implements IAuthUserInfoDto {
     email?: string;
     claims?: { [key: string]: string; };
@@ -1581,6 +1740,200 @@ export interface IAuthUserInfoDto {
     roles?: UserToRole[];
     summary?: string;
     jwt?: string;
+}
+
+export abstract class IStatusGeneric implements IIStatusGeneric {
+    errors?: ErrorGeneric[] | undefined;
+    isValid?: boolean;
+    hasErrors?: boolean;
+    message?: string | undefined;
+
+    constructor(data?: IIStatusGeneric) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(ErrorGeneric.fromJS(item));
+            }
+            this.isValid = _data["isValid"];
+            this.hasErrors = _data["hasErrors"];
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): IStatusGeneric {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'IStatusGeneric' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item.toJSON());
+        }
+        data["isValid"] = this.isValid;
+        data["hasErrors"] = this.hasErrors;
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export interface IIStatusGeneric {
+    errors?: ErrorGeneric[] | undefined;
+    isValid?: boolean;
+    hasErrors?: boolean;
+    message?: string | undefined;
+}
+
+export class ErrorGeneric implements IErrorGeneric {
+    header?: string | undefined;
+    errorResult?: ValidationResult | undefined;
+    debugData?: string | undefined;
+
+    constructor(data?: IErrorGeneric) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.header = _data["header"];
+            this.errorResult = _data["errorResult"] ? ValidationResult.fromJS(_data["errorResult"]) : <any>undefined;
+            this.debugData = _data["debugData"];
+        }
+    }
+
+    static fromJS(data: any): ErrorGeneric {
+        data = typeof data === 'object' ? data : {};
+        let result = new ErrorGeneric();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["header"] = this.header;
+        data["errorResult"] = this.errorResult ? this.errorResult.toJSON() : <any>undefined;
+        data["debugData"] = this.debugData;
+        return data;
+    }
+}
+
+export interface IErrorGeneric {
+    header?: string | undefined;
+    errorResult?: ValidationResult | undefined;
+    debugData?: string | undefined;
+}
+
+export class ValidationResult implements IValidationResult {
+    memberNames?: string[];
+    errorMessage?: string | undefined;
+
+    constructor(data?: IValidationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["memberNames"])) {
+                this.memberNames = [] as any;
+                for (let item of _data["memberNames"])
+                    this.memberNames!.push(item);
+            }
+            this.errorMessage = _data["errorMessage"];
+        }
+    }
+
+    static fromJS(data: any): ValidationResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidationResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.memberNames)) {
+            data["memberNames"] = [];
+            for (let item of this.memberNames)
+                data["memberNames"].push(item);
+        }
+        data["errorMessage"] = this.errorMessage;
+        return data;
+    }
+}
+
+export interface IValidationResult {
+    memberNames?: string[];
+    errorMessage?: string | undefined;
+}
+
+export class CreateDemoCommand implements ICreateDemoCommand {
+    tenantName?: string;
+    email?: string;
+    password?: string;
+    productId?: number;
+
+    constructor(data?: ICreateDemoCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantName = _data["tenantName"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.productId = _data["productId"];
+        }
+    }
+
+    static fromJS(data: any): CreateDemoCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateDemoCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantName"] = this.tenantName;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["productId"] = this.productId;
+        return data;
+    }
+}
+
+export interface ICreateDemoCommand {
+    tenantName?: string;
+    email?: string;
+    password?: string;
+    productId?: number;
 }
 
 export class OrderDto implements IOrderDto {

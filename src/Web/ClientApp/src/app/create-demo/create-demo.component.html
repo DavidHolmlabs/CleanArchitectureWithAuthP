@@ -1,0 +1,27 @@
+<h1>Create Demo</h1>
+
+<div class="mb-3">
+    <label for="tenantInput" class="form-label">Organization name</label>
+    <input type="text" [(ngModel)]="createDemoCommand.tenantName" class="form-control" id="tenantInput" aria-describedby="tenantHelp" autofocus="autofocus" maxlength="200">
+    <div id="emailHelp" class="form-text">Please enter the name of your organization.</div>
+</div>
+
+<div class="mb-3">
+    <label for="emailInput" class="form-label">Email</label>
+    <input type="email" [(ngModel)]="createDemoCommand.email" class="form-control" id="emailInput" aria-describedby="tenantHelp">
+    <div id="emailHelp" class="form-text">Please enter your email.</div>
+</div>
+
+<div class="mb-3">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password" [(ngModel)]="createDemoCommand.password" class="form-control" id="passwordInput">
+</div>
+
+<div class="mb-3">
+    <label for="disabledSelect" class="form-label">Product</label>
+    <select class="form-control" [(ngModel)]="createDemoCommand.productId">
+        <option [ngValue]="product.id" *ngFor="let product of products">{{ product.name }}</option>
+    </select>
+</div>
+
+<button type="submit" class="btn btn-primary" (click)="createDemo()">Submit</button>

@@ -1,7 +1,8 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3">
         <div class="container">
-            <a class="navbar-brand" [routerLink]="['/']">CleanArchitecture.Web</a>
+            <a class="navbar-brand" [routerLink]="['/']" *ngIf="!navMenuDto?.tenant">CleanArchitecture.Web</a>
+            <a class="navbar-brand" [routerLink]="['/']" *ngIf="navMenuDto.tenant">{{navMenuDto.tenant.tenantFullName}}</a>
             <button class="navbar-toggler"
                     type="button"
                     data-toggle="collapse"
@@ -19,16 +20,8 @@
                         [routerLinkActiveOptions]="{ exact: true }">
                         <a class="nav-link text-light" [routerLink]="['/']">Home</a>
                     </li>
-                    <!--
-    <li class="nav-item" [routerLinkActive]="['link-active']">
-        <a class="nav-link text-light" [routerLink]="['/counter']">Counter</a>
-    </li> -->
-                    <!--
-    <li class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="nav-link text-light" [routerLink]="['/fetch-data']">Fetch data</a>
-    </li> -->
                     <li class="nav-item" [routerLinkActive]="['link-active']">
-                        <a class="nav-link text-light" [routerLink]="['/todo']">Todo</a>
+                        <a class="nav-link text-light" [routerLink]="['/demo']">Create Demo</a>
                     </li>
                     <li class="nav-item" [routerLinkActive]="['link-active']">
                         <a class="nav-link text-light" [routerLink]="['/order']">Orders</a>

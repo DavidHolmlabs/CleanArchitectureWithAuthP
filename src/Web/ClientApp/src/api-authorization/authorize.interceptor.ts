@@ -14,6 +14,12 @@ export class AuthorizeInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Skip interceptor for specific path
+    if (req.url.includes('/api/Products')) {
+      console.log("==> " + req.url);
+      return next.handle(req);
+    }
+
     return next.handle(req).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.url?.startsWith(this.loginUrl)) {
@@ -22,7 +28,7 @@ export class AuthorizeInterceptor implements HttpInterceptor {
         return throwError(() => error);
       }),
       // HACK: As of .NET 8 preview 5, some non-error responses still need to be redirected to login page.
-      map((event: HttpEvent<any>) => {2
+      map((event: HttpEvent<any>) => {
         if (event instanceof HttpResponse && event.url?.startsWith(this.loginUrl)) {
           window.location.href = `${this.loginUrl}?ReturnUrl=${window.location.pathname}`;
         }
