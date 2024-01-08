@@ -1,11 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using AuthPermissions.AdminCode;
 using CleanArchitecture.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CleanArchitecture.Application.AuthUsers.Queries.AuthUserInfo;

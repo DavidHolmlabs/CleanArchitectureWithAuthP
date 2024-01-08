@@ -4,7 +4,8 @@ using AuthPermissions.AspNetCore.Services;
 using AuthPermissions.AspNetCore.StartupServices;
 using AuthPermissions.BaseCode;
 using AuthPermissions.BaseCode.SetupCode;
-using AuthPermissions.SupportCode.DownStatusCode;
+using AuthPermissions.SupportCode.AddUsersServices;
+using AuthPermissions.SupportCode.AddUsersServices.Authentication;
 using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Domain.Constants;
 using CleanArchitecture.Infrastructure;
@@ -93,6 +94,7 @@ public static class DependencyInjection
             .IndividualAccountsAuthentication<ApplicationUser>()
             .RegisterAddClaimToUser<AddTenantNameClaim>()
             .RegisterAddClaimToUser<AddCertificationIdsClaims>()
+            .RegisterTenantChangeService<SiTenantChangeService>()
             .AddRolesPermissionsIfEmpty(AppAuthSetupData.RolesDefinition)
             .AddTenantsIfEmpty(AppAuthSetupData.TenantDefinition)
             .AddAuthUsersIfEmpty(AppAuthSetupData.UsersRolesDefinition)
@@ -112,6 +114,8 @@ public static class DependencyInjection
 
         services.AddSingleton(TimeProvider.System);
         services.AddTransient<IIdentityService, IdentityService>();
+        services.AddTransient<IAddNewUserManager, IndividualUserAddUserManager<ApplicationUser>>();
+        services.AddTransient<ISignInAndCreateTenant, SignInAndCreateTenant>();
 
         services.AddAuthorization();// TODO: Check: to be able to use [Authorize(Roles = "Administrator")]
 

@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using AuthPermissions.BaseCode.DataLayer.Classes;
-using Microsoft.IdentityModel.Tokens;
+﻿using AuthPermissions.BaseCode.DataLayer.Classes;
 
 namespace CleanArchitecture.Application.AuthUsers;
 public class AuthUserInfoDto

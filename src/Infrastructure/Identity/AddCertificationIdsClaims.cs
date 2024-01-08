@@ -26,6 +26,9 @@ public class AddCertificationIdsClaims : IClaimsAdder
     {
         var user = (await _userAdmin.FindAuthUserByUserIdAsync(userId)).Result;
 
+        if (user.UserTenant == null)
+            return new Claim(CertificationIdsClaimType, "");
+
         var availableOrders = await _mediator.Send(new AvailableOrdersQuery { DataKey = user.UserTenant.GetTenantDataKey() });
 
         List<int> ids = [];
