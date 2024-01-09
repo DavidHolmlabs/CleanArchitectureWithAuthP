@@ -1,8 +1,8 @@
 ﻿dotnet new ca-usecase --name CreateTenant --feature-name Tenants --usecase-type command --return-type CreateTenantDto
-
 dotnet new ca-usecase --name CreateTenant --feature-name Tenants --usecase-type command 
-
 dotnet new ca-usecase --name ListTenants --feature-name Tenants --usecase-type query --return-type List<Tenant>
+dotnet new ca-usecase --name StartAccess --feature-name Tenants --usecase-type command --return-type string
+dotnet new ca-usecase --name StopAccess --feature-name Tenants --usecase-type command --return-type string
 
 dotnet new ca-usecase --name ListAuthUsers --feature-name AuthUsers --usecase-type query --return-type List<AuthUsers>
 dotnet new ca-usecase --name NavMenu --feature-name AuthUsers --usecase-type query --return-type NavMenu

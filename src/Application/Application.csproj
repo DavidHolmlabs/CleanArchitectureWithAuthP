@@ -10,6 +10,7 @@
     <PackageReference Include="AuthPermissions.AspNetCore" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="GenericServices.StatusGeneric" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
