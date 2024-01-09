@@ -27,6 +27,35 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "AuthUsers"
+        ],
+        "operationId": "Invite",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/AuthUsers/nav-menu": {
@@ -62,6 +91,38 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthUserInfoDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/AuthUsers/accept": {
+      "post": {
+        "tags": [
+          "AuthUsers"
+        ],
+        "operationId": "AcceptInvite",
+        "requestBody": {
+          "x-name": "acceptInviteCommand",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptInviteCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddNewUserDto"
                 }
               }
             }
@@ -939,6 +1000,72 @@
             "type": "string"
           },
           "jwt": {
+            "type": "string"
+          }
+        }
+      },
+      "AddNewUserDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 256,
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "maxLength": 128,
+            "nullable": true
+          },
+          "roles": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenantId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "timeInviteExpires": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPersistent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AcceptInviteCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "verify": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "InviteDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
             "type": "string"
           }
         }

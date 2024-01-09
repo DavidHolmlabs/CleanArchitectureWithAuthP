@@ -17,8 +17,10 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAuthUsersClient {
     getAuthUsers(): Observable<AuthUser[]>;
+    invite(email: string): Observable<InviteDto>;
     getNavMenu(): Observable<NavMenuDto>;
     getAuthUserInfo(): Observable<AuthUserInfoDto>;
+    acceptInvite(acceptInviteCommand: AcceptInviteCommand): Observable<AddNewUserDto>;
 }
 
 @Injectable({
@@ -79,6 +81,58 @@ export class AuthUsersClient implements IAuthUsersClient {
             else {
                 result200 = <any>null;
             }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    invite(email: string): Observable<InviteDto> {
+        let url_ = this.baseUrl + "/api/AuthUsers?";
+        if (email === undefined || email === null)
+            throw new Error("The parameter 'email' must be defined and cannot be null.");
+        else
+            url_ += "email=" + encodeURIComponent("" + email) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processInvite(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processInvite(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<InviteDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<InviteDto>;
+        }));
+    }
+
+    protected processInvite(response: HttpResponseBase): Observable<InviteDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = InviteDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -175,6 +229,58 @@ export class AuthUsersClient implements IAuthUsersClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = AuthUserInfoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    acceptInvite(acceptInviteCommand: AcceptInviteCommand): Observable<AddNewUserDto> {
+        let url_ = this.baseUrl + "/api/AuthUsers/accept";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(acceptInviteCommand);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAcceptInvite(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAcceptInvite(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AddNewUserDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AddNewUserDto>;
+        }));
+    }
+
+    protected processAcceptInvite(response: HttpResponseBase): Observable<AddNewUserDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AddNewUserDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1842,6 +1948,158 @@ export interface IAuthUserInfoDto {
     roles?: UserToRole[];
     summary?: string;
     jwt?: string;
+}
+
+export class AddNewUserDto implements IAddNewUserDto {
+    email?: string | undefined;
+    userName?: string | undefined;
+    roles?: string[] | undefined;
+    tenantId?: number | undefined;
+    timeInviteExpires?: number;
+    password?: string | undefined;
+    isPersistent?: boolean;
+
+    constructor(data?: IAddNewUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.userName = _data["userName"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(item);
+            }
+            this.tenantId = _data["tenantId"];
+            this.timeInviteExpires = _data["timeInviteExpires"];
+            this.password = _data["password"];
+            this.isPersistent = _data["isPersistent"];
+        }
+    }
+
+    static fromJS(data: any): AddNewUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNewUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["userName"] = this.userName;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
+        data["tenantId"] = this.tenantId;
+        data["timeInviteExpires"] = this.timeInviteExpires;
+        data["password"] = this.password;
+        data["isPersistent"] = this.isPersistent;
+        return data;
+    }
+}
+
+export interface IAddNewUserDto {
+    email?: string | undefined;
+    userName?: string | undefined;
+    roles?: string[] | undefined;
+    tenantId?: number | undefined;
+    timeInviteExpires?: number;
+    password?: string | undefined;
+    isPersistent?: boolean;
+}
+
+export class AcceptInviteCommand implements IAcceptInviteCommand {
+    verify?: string;
+    email?: string;
+    userName?: string;
+    password?: string;
+
+    constructor(data?: IAcceptInviteCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.verify = _data["verify"];
+            this.email = _data["email"];
+            this.userName = _data["userName"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): AcceptInviteCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new AcceptInviteCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["verify"] = this.verify;
+        data["email"] = this.email;
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        return data;
+    }
+}
+
+export interface IAcceptInviteCommand {
+    verify?: string;
+    email?: string;
+    userName?: string;
+    password?: string;
+}
+
+export class InviteDto implements IInviteDto {
+    url?: string;
+
+    constructor(data?: IInviteDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): InviteDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new InviteDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        return data;
+    }
+}
+
+export interface IInviteDto {
+    url?: string;
 }
 
 export abstract class IStatusGeneric implements IIStatusGeneric {

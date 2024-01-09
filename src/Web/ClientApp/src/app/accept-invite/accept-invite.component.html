@@ -1,0 +1,18 @@
+<p>Register</p>
+
+<div class="form-group">
+    <label for="email">Email</label>
+    <input id="email" class="form-control" type="email" [(ngModel)]="acceptInviteCommand.email" />
+</div>
+
+<div class="form-group">
+    <label for="email">UserName</label>
+    <input id="email" class="form-control" type="text" [(ngModel)]="acceptInviteCommand.userName" />
+</div>
+
+<div class="form-group">
+    <label for="email">Password</label>
+    <input id="email" class="form-control" type="text" [(ngModel)]="acceptInviteCommand.password" />
+</div>
+
+<button class="btn btn-primary" (click)="register()">Register</button>

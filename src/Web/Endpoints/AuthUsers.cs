@@ -1,5 +1,8 @@
 ﻿using AuthPermissions.BaseCode.DataLayer.Classes;
+using AuthPermissions.SupportCode.AddUsersServices;
 using CleanArchitecture.Application.AuthUsers;
+using CleanArchitecture.Application.AuthUsers.Commands.AcceptInvite;
+using CleanArchitecture.Application.AuthUsers.Commands.InviteAuthUsers;
 using CleanArchitecture.Application.AuthUsers.Queries.AuthUserInfo;
 using CleanArchitecture.Application.AuthUsers.Queries.ListAuthUsers;
 using CleanArchitecture.Application.AuthUsers.Queries.NavMenu;
@@ -13,7 +16,9 @@ public class AuthUsers : EndpointGroupBase
         app.MapGroup(this)
             .MapGet(GetAuthUsers)
             .MapGet(GetNavMenu, "nav-menu")
-            .MapGet(GetAuthUserInfo, "me");
+            .MapGet(GetAuthUserInfo, "me")
+            .MapPost(AcceptInvite, "accept")
+            .MapPost(Invite);
     }
 
     public async Task<List<AuthUser>> GetAuthUsers(ISender sender)
@@ -29,5 +34,26 @@ public class AuthUsers : EndpointGroupBase
     public async Task<NavMenuDto> GetNavMenu(ISender sender)
     {
         return await sender.Send(new NavMenuQuery());
+    }
+
+    public async Task<InviteDto> Invite(ISender sender, string email)
+    {
+        string baseUrl = "https://localhost:44447/accept-invite?verify=";
+
+        var invite = await sender.Send(new InviteAuthUsersCommand { Email = email });
+
+        invite.Url = baseUrl + invite.Url;
+
+        return invite;
+    }
+
+    public async Task<AddNewUserDto> AcceptInvite(ISender sender, AcceptInviteCommand acceptInviteCommand)
+    {
+        StatusGeneric.IStatusGeneric<AddNewUserDto> status = await sender.Send(acceptInviteCommand);
+
+        if (status.IsValid)
+            return status.Result;
+
+        return new AddNewUserDto();
     }
 }

@@ -6,6 +6,8 @@ dotnet new ca-usecase --name StopAccess --feature-name Tenants --usecase-type co
 
 dotnet new ca-usecase --name ListAuthUsers --feature-name AuthUsers --usecase-type query --return-type List<AuthUsers>
 dotnet new ca-usecase --name NavMenu --feature-name AuthUsers --usecase-type query --return-type NavMenu
+dotnet new ca-usecase --name InviteAuthUsers --feature-name AuthUsers --usecase-type command --return-type List<InviteDto>
+dotnet new ca-usecase --name AcceptInvite --feature-name AuthUsers --usecase-type command 
 
 dotnet new ca-usecase --name ListRoles --feature-name Roles --usecase-type query --return-type List<Role>
 

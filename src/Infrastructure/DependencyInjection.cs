@@ -116,6 +116,7 @@ public static class DependencyInjection
         services.AddTransient<IIdentityService, IdentityService>();
         services.AddTransient<IAddNewUserManager, IndividualUserAddUserManager<ApplicationUser>>();
         services.AddTransient<ISignInAndCreateTenant, SignInAndCreateTenant>();
+        services.AddTransient<IInviteNewUserService, InviteNewUserService>();
 
         services.AddAuthorization();// TODO: Check: to be able to use [Authorize(Roles = "Administrator")]
 

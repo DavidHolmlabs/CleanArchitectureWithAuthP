@@ -18,6 +18,8 @@ import { ProductComponent } from './product/product.component';
 import { UserComponent } from './user/user.component';
 import { MeComponent } from './me/me.component';
 import { CreateDemoComponent } from './create-demo/create-demo.component';
+import { InviteComponent } from './invite/invite.component';
+import { AcceptInviteComponent } from './accept-invite/accept-invite.component';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -34,7 +36,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     TenantComponent,
     UserComponent,
     MeComponent,
-    CreateDemoComponent
+    CreateDemoComponent,
+    InviteComponent, AcceptInviteComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -51,6 +54,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { path: 'user', component: UserComponent },
       { path: 'me', component: MeComponent },
       { path: 'demo', component: CreateDemoComponent },
+      { path: 'invite', component: InviteComponent },
+      { path: 'accept-invite', component: AcceptInviteComponent },
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot()
