@@ -15,4 +15,18 @@ export class TenantComponent {
       error: error => console.error(error)
     });
   }
+
+  startAccess(tenant: TenantDto): void {
+    this.tenantsClient.startAccess(tenant.tenantId).subscribe({
+      next: result => console.log(result),
+      error: error => console.error(error)
+    });
+  }
+
+  stopAccess(): void {
+    this.tenantsClient.stopAccess().subscribe({
+      next: result => console.log(result),
+      error: error => console.error(error)
+    });
+  }
 }

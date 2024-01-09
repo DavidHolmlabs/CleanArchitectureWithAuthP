@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3">
         <div class="container">
             <a class="navbar-brand" [routerLink]="['/']" *ngIf="!navMenuDto?.tenant">CleanArchitecture.Web</a>
-            <a class="navbar-brand" [routerLink]="['/']" *ngIf="navMenuDto.tenant">{{navMenuDto.tenant.tenantFullName}}</a>
+            <a class="navbar-brand" [routerLink]="['/']" *ngIf="navMenuDto?.tenant">{{navMenuDto.tenant.tenantFullName}}</a>
             <button class="navbar-toggler"
                     type="button"
                     data-toggle="collapse"

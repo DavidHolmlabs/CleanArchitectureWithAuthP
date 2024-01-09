@@ -3,18 +3,23 @@
 <p *ngIf="!tenants?.length"><em>Loading...</em></p>
 
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="tenants.length">
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>DataKey</th>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let tenant of tenants">
-      <td>{{ tenant.tenantId }}</td>
-      <td>{{ tenant.dataKey }}</td>
-      <td>{{ tenant.tenantFullName }}</td>
-    </tr>
-  </tbody>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>DataKey</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let tenant of tenants">
+            <td>{{ tenant.tenantId }}</td>
+            <td>{{ tenant.dataKey }}</td>
+            <td>{{ tenant.tenantFullName }}</td>
+            <td>
+                <a class="btn btn-primary" (click)="startAccess(tenant)">View Data</a>
+            </td>
+        </tr>
+    </tbody>
 </table>
+
+<a class="btn btn-primary" (click)="stopAccess()">Stop</a>

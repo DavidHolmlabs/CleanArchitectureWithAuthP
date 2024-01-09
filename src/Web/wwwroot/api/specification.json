@@ -313,6 +313,58 @@
         }
       }
     },
+    "/api/Tenants/start-access": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "StartAccess",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IStatusGeneric"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Tenants/stop-access": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "operationId": "StopAccess",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IStatusGeneric"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
